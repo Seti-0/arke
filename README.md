@@ -1,1 +1,1 @@
-Template repository for duality plugins. For now, just contains duality and a suitable .gitignore
+WIP. Part of what may become a Duality multiplayer plugin someday.
