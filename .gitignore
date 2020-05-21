@@ -1,0 +1,45 @@
+# General
+*.dat
+*.exe
+*.zip
+*.dll
+*.pdb
+*.xml
+*.nupkg
+*.config
+
+# System
+*.ico
+*.ini
+
+# Visual Studio
+.vs/
+!packages.config
+
+# Source
+Packages/
+obj/
+bin/
+
+# Duality
+Backup/
+*log*.txt
+*.chm
+!DefaultUserData.dat
+!AppData.dat
+
+# Duality First Run
+!DualityEditor.exe
+!DualityEditor.exe.config
+!Duality.dll
+!DualityPrimitives.dll
+!NuGet.Core.dll
+!PackageConfig.xml
+!VistaBridgeLibrary.dll
+!Windows7.DesktopIntegration.dll
+
+# Soulstone specific
+!SoulstoneUtility.core.dll
+!SoulstoneUtility.core.pdb
+!SoulstoneSerialization.editor.dll
+!SoulstoneSerialization.editor.pdb
