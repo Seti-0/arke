@@ -1,0 +1,15 @@
+(Blog:)
+http://geekswithblogs.net/imilovanovic/archive/2012/08/31/vs2012---how-to-manually-convert-.net-class-library-to.aspx
+
+(I used SO though:)
+https://stackoverflow.com/questions/32075137/how-to-convert-a-portable-class-library-pcl-to-a-normal-class-library
+
+(Summary:)
+Two changes to the csproj file.
+
+1) Delete: <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+
+2) Replace: <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+	with: <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+That's it! You just need to set up project references now.
