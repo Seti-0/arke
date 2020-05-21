@@ -22,7 +22,6 @@ obj/
 bin/
 
 # Duality
-Backup/
 *log*.txt
 *.chm
 !DefaultUserData.dat
@@ -43,3 +42,7 @@ Backup/
 !SoulstoneUtility.core.pdb
 !SoulstoneSerialization.editor.dll
 !SoulstoneSerialization.editor.pdb
+
+# Project specific
+!Lidgren.Network.dll
+!Lidgren.Network.pdb
