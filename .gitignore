@@ -20,6 +20,7 @@
 Packages/
 obj/
 bin/
+!app.config
 
 # Duality
 *log*.txt
