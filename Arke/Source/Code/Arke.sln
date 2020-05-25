@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30104.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePlugin", "CorePlugin\CorePlugin.csproj", "{AFE883F3-72B4-4C7C-A1D1-44EDC09C8F6E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePluginNew", "CorePlugin\CorePluginNew.csproj", "{AFE883F3-72B4-4C7C-A1D1-44EDC09C8F6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorePlugin", "..\..\..\..\games-cupboard\GamesCupboard\Source\Code\CorePlugin\CorePlugin.csproj", "{80E5E70F-456D-49A7-AE99-76F6E2982555}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Experiments", "Experiments\Experiments.csproj", "{63C5A1B4-D33E-47C8-A5C5-9E6C44301119}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{AFE883F3-72B4-4C7C-A1D1-44EDC09C8F6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFE883F3-72B4-4C7C-A1D1-44EDC09C8F6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFE883F3-72B4-4C7C-A1D1-44EDC09C8F6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80E5E70F-456D-49A7-AE99-76F6E2982555}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80E5E70F-456D-49A7-AE99-76F6E2982555}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80E5E70F-456D-49A7-AE99-76F6E2982555}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80E5E70F-456D-49A7-AE99-76F6E2982555}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63C5A1B4-D33E-47C8-A5C5-9E6C44301119}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63C5A1B4-D33E-47C8-A5C5-9E6C44301119}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63C5A1B4-D33E-47C8-A5C5-9E6C44301119}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63C5A1B4-D33E-47C8-A5C5-9E6C44301119}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
