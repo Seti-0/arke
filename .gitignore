@@ -47,3 +47,4 @@ bin/
 # Project specific
 !Lidgren.Network.dll
 !Lidgren.Network.pdb
+Experiments/
