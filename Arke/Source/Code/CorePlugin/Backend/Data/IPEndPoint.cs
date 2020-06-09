@@ -26,6 +26,11 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
             else return base.Equals(obj);
         }
 
+        public override string ToString()
+        {
+            return $"{Address.ToString() ?? "<null>"}:{Port}";
+        }
+
         public override int GetHashCode()
         {
             if (Address == null)
