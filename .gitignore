@@ -45,6 +45,10 @@ bin/
 !SoulstoneSerialization.editor.pdb
 
 # Project specific
+!Blue.core.dll
+!Blue.core.pdb
+!BlueInput.core.dll
+!BlueInput.core.pdb
 !Lidgren.Network.dll
 !Lidgren.Network.pdb
 Experiments/

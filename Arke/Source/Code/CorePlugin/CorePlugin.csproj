@@ -39,6 +39,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Blue.core">
+      <HintPath>..\..\..\Plugins\Blue.core.dll</HintPath>
+    </Reference>
     <Reference Include="Duality">
       <HintPath>..\..\..\Duality.dll</HintPath>
     </Reference>
@@ -46,7 +49,7 @@
       <HintPath>..\..\..\DualityPrimitives.dll</HintPath>
     </Reference>
     <Reference Include="Lidgren.Network">
-      <HintPath>..\..\..\..\..\duality-lidgren\LidrenNetworker\Plugins\Lidgren.Network.dll</HintPath>
+      <HintPath>..\..\..\Plugins\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
