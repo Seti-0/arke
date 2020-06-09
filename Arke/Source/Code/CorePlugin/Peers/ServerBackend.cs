@@ -74,11 +74,13 @@ namespace Soulstone.Duality.Plugins.Arke
 
         public void SendData(byte[] data, Backend.NetDeliveryMethod deliveryMethod, int channel = 0)
         {
-            SendData(data, deliveryMethod, channel, null);
+            base.SendData(data, deliveryMethod, channel, null);
         }
 
         public void SendData(byte[] data, Backend.NetDeliveryMethod deliveryMethod, int channel = 0, params PeerInfo[] targets)
         {
+            if (targets == null) throw new ArgumentNullException(nameof(targets));
+
             var connections = new List<NetConnection>();
 
             foreach (var target in targets)
