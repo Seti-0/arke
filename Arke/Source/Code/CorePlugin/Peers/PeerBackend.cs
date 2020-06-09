@@ -59,8 +59,12 @@ namespace Soulstone.Duality.Plugins.Arke
 
         protected void Stop(string reason = null)
         {
-            if (_peer.Status == NetPeerStatus.NotRunning) _peer = null;
             if (_peer == null) return;
+            if (_peer.Status == NetPeerStatus.NotRunning)
+            {
+                _peer = null;
+                return;
+            }
 
             _peer.Shutdown(reason ?? "Unexpected shutdown");
             _peer = null;
@@ -116,7 +120,11 @@ namespace Soulstone.Duality.Plugins.Arke
 
         private void ParseMessage(NetIncomingMessage message)
         {
-            var senderEndPoint = Conversions.ToArke(message.SenderEndPoint);
+            Backend.IPEndPoint senderEndPoint = null;
+
+            if(message?.SenderEndPoint != null)
+                senderEndPoint = Conversions.ToArke(message.SenderEndPoint);
+
             var senderInfo = new PeerInfo(null, senderEndPoint);
 
             switch (message.MessageType)
@@ -137,7 +145,9 @@ namespace Soulstone.Duality.Plugins.Arke
 
         private void HandleDataMessage(NetIncomingMessage message, PeerInfo senderInfo)
         {
-            byte[] data = message.Data;
+            int length = message.ReadVariableInt32();
+            byte[] data = message.ReadBytes(length);
+
             OnDataRecieved(new DataRecievedEventArgs(senderInfo, data));
         }
 
@@ -161,6 +171,7 @@ namespace Soulstone.Duality.Plugins.Arke
             }
 
             var message = _peer.CreateMessage();
+            message.WriteVariableInt32(data.Length);
             message.Write(data);
 
             var method = Conversions.ToLidgren(deliveryMethod);
