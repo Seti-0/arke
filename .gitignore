@@ -27,6 +27,7 @@ bin/
 *.chm
 !DefaultUserData.dat
 !AppData.dat
+Backup/
 
 # Duality First Run
 !DualityEditor.exe
