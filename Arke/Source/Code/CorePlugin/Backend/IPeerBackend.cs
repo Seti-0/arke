@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Soulstone.Duality.Plugins.Arke.Backend
 {
-    public interface IPeerBackend : IDisposable
+    public interface IPeerBackend
     {
         IPEndPoint EndPoint { get; }
 

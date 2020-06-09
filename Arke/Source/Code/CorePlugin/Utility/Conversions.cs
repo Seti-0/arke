@@ -12,22 +12,22 @@ namespace Soulstone.Duality.Plugins.Arke
 {
     public static class Conversions
     {
-        public static IPEndPoint ToArke(System.Net.IPEndPoint ipEnd)
+        public static Backend.IPEndPoint ToArke(System.Net.IPEndPoint ipEnd)
         {
-            return new IPEndPoint(ToArke(ipEnd.Address), (ushort)ipEnd.Port);
+            return new Backend.IPEndPoint(ToArke(ipEnd.Address), (ushort)ipEnd.Port);
         }
 
-        public static IPAddress ToArke(System.Net.IPAddress ip)
+        public static Backend.IPAddress ToArke(System.Net.IPAddress ip)
         {
-            return new IPAddress(ip.GetAddressBytes());
+            return new Backend.IPAddress(ip.GetAddressBytes());
         }
 
-        public static System.Net.IPEndPoint ToNet(IPEndPoint ipEnd)
+        public static System.Net.IPEndPoint ToNet(Backend.IPEndPoint ipEnd)
         {
             return new System.Net.IPEndPoint(ToNet(ipEnd.Address), ipEnd.Port);
         }
 
-        public static System.Net.IPAddress ToNet(IPAddress ip)
+        public static System.Net.IPAddress ToNet(Backend.IPAddress ip)
         {
             return new System.Net.IPAddress(ip.Bytes);
         }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Soulstone.Duality.Plugins.Arke
+namespace Soulstone.Duality.Plugins.Arke.Backend
 {
     public class PeerInfo
     {

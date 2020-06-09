@@ -20,7 +20,7 @@ namespace Soulstone.Duality.Plugins.Arke
         public event EventHandler<DisconnectEventArgs> Disconnected;
         public event EventHandler<DataRecievedEventArgs> DataRecieved;
 
-        public IPEndPoint EndPoint { private set; get; }
+        public Backend.IPEndPoint EndPoint { private set; get; }
         public string Name { private set; get; }
 
         public bool Connected
@@ -51,12 +51,6 @@ namespace Soulstone.Duality.Plugins.Arke
 
         protected virtual void OnQuit() {}
 
-        public void Dispose()
-        {
-            _peer?.Shutdown("Unexpected shutdown");
-            _peer = null;
-        }
-
         public void Quit()
         {
             _peer.Shutdown("Quit");
@@ -80,7 +74,7 @@ namespace Soulstone.Duality.Plugins.Arke
             if (peer.Configuration.Port > ushort.MaxValue || peer.Configuration.Port < 0)
                 throw new ArgumentOutOfRangeException($"Port {peer.Configuration.Port} does not fall within the allowed range of 0 to {ushort.MaxValue}");
 
-            EndPoint = new IPEndPoint(Conversions.ToArke(peer.Configuration.LocalAddress), (ushort) peer.Configuration.Port);
+            EndPoint = new Backend.IPEndPoint(Conversions.ToArke(peer.Configuration.LocalAddress), (ushort) peer.Configuration.Port);
             Name = name;
 
             _peer = peer;
