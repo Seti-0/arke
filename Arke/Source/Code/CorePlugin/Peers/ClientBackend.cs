@@ -38,13 +38,14 @@ namespace Soulstone.Duality.Plugins.Arke
         {
             if (Joining)
             {
-                Logs.Game.WriteWarning("Cannot start joining while joining already.");
-                return false;
+                Logs.Game.WriteWarning("Started to join while joining already");
+                Logs.Game.Write("Interrupting previous Join attempt");
+                Quit();
             }
 
             if (!Idle)
             {
-                Logs.Game.WriteWarning("Must be idle to start joining.");
+                Logs.Game.WriteWarning("Must be idle to start joining");
                 return false;
             }
 

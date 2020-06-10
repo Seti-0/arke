@@ -92,6 +92,9 @@ namespace Soulstone.Duality.Plugins.Arke
 
         public void Quit()
         {
+            if (_peer == null)
+                return;
+
             OnQuit();
 
             _info.Clear();

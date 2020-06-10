@@ -50,7 +50,7 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
 
             Listeners.Add<Button>(ButtonEvents.Action, (b) => Host(), "Host");
             Listeners.Add<Button>(ButtonEvents.Action, (b) => Join(), "Join");
-            Listeners.Add<Button>(ButtonEvents.Action, (b) => Shutdown(), "Quit");
+            Listeners.Add<Button>(ButtonEvents.Action, (b) => Quit(), "Quit");
 
             Listeners.Add<Button>(ButtonEvents.Action, (b) => Send(), "Send");
 
@@ -196,6 +196,12 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
 
         private void Join()
         {
+            if (!_client.Idle)
+            {
+                Console?.Info.WriteLine("Shutting down client");
+                _client.Quit();
+            }
+
             string ipText = Get<TextEditor>("IP")?.Content;
             string portText = Get<TextEditor>("Port")?.Content;
 
@@ -245,7 +251,7 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
             }
         }
 
-        public void Shutdown()
+        public void Quit()
         {
             if (!(_server.Idle && _client.Idle))
                 Console?.Info.WriteLine("Shutting down");
