@@ -6,21 +6,34 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Duality;
+using Duality.Serialization;
 using Duality.Drawing;
 using Duality.Editor;
+
 using Soulstone.Duality.Plugins.Arke.Backend;
 using Soulstone.Duality.Plugins.Blue;
 using Soulstone.Duality.Plugins.Blue.Components.Basic;
+using System.IO;
 
 namespace Soulstone.Duality.Plugins.Arke.Testing
 {
     [EditorHintCategory(CategoryNames.Testing)]
     public class TestContext : UIContext, ICmpInitializable, ICmpUpdatable
     {
+        public ColorRgba ServerColor { get; set; }
+        public ColorRgba MyColor { get; set; }
+        public ColorRgba OtherColor { get; set; }
+
         public TestConsole Console { get; set; }
 
         [DontSerialize] private ServerBackend _server = new ServerBackend();
         [DontSerialize] private ClientBackend _client = new ClientBackend();
+
+        private class Message
+        {
+            public PeerInfo Sender;
+            public string Content;
+        }
 
         public void OnUpdate()
         {
@@ -41,27 +54,46 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
 
             Listeners.Add<Button>(ButtonEvents.Action, (b) => Send(), "Send");
 
-            _client.DataRecieved += OnDataRecieved;
-            _server.DataRecieved += OnDataRecieved;
+            _client.DataRecieved += _client_DataRecieved;
+            _server.DataRecieved += _server_DataRecieved;
 
             _client.Joined += _client_Joined;
-            _client.Disconnected += _client_Disconnected;
+            _client.Disconnect += _client_Disconnected;
 
             _server.Joined += _server_Joined;
-            _server.Disconnected += _server_Disconnected;
+            _server.Disconnect += _server_Disconnected;
+        }
+
+        private void _server_DataRecieved(object sender, DataRecievedEventArgs e)
+        {
+            if (TryReadMessage(e.Data, out Message message))
+            {
+                ShowMessage(_server, message);
+                RelayToClients(message);
+            }
+        }
+
+        private void _client_DataRecieved(object sender, DataRecievedEventArgs e)
+        {
+            if (TryReadMessage(e.Data, out Message message))
+                ShowMessage(_client, message);
         }
 
         private void _server_Joined(object sender, ClientJoinedEventArgs e)
         {
-            Console?.Success.WriteLine($"{e.Client} has joined");
+            SendFromServer($"{e.Client} has joined");
         }
 
         private void _server_Disconnected(object sender, DisconnectEventArgs e)
         {
+            string message = null;
+
             if (e.Reason == DisconnectReason.Quit)
-                Console?.Info.WriteLine($"{e.RemotePeer} has left");
+                message = $"{e.RemotePeer} has left";
             else
-                Console?.Warning.WriteLine($"{e.RemotePeer} has disconnected");
+                message = $"{e.RemotePeer} has disconnected";
+
+            SendFromServer(message);
         }
 
         private void _client_Disconnected(object sender, DisconnectEventArgs e)
@@ -70,14 +102,6 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
                 Console?.Info.WriteLine("Disconnected - Server has stopped hosting");
             else 
                 Console?.Warning.WriteLine("Disconnected from server");
-        }
-
-        private void OnDataRecieved(object sender, DataRecievedEventArgs e)
-        {
-            string message = Encoding.UTF8.GetString(e.Data);
-
-            Console?.Debug.WriteLine($"Message from {e.Sender.EndPoint}");
-            Console?.Info.Write($"{e.Sender.Name}: ").WriteLine(message, ColorRgba.White);
         }
 
         private void _client_Joined(object sender, ServerJoinedEventArgs e)
@@ -94,20 +118,80 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
 
         private void Send()
         {
-            string message = Get<TextEditor>("Input")?.Content;
-            if (string.IsNullOrEmpty(message)) return;
+            string content = Get<TextEditor>("Input")?.Content;
+            if (string.IsNullOrEmpty(content)) return;
 
-            var data = Encoding.UTF8.GetBytes(message);
+            SendFromServer(content);
+            SendFromClient(content);
+        }
 
-            string name = _server.Name ?? _client.Name;
+        private void SendFromServer(string content)
+        {
+            if (!_server.Connected) return;
 
-            Console?.Special.Write(name + ": ").WriteLine(message);
+            var message = new Message
+            {
+                Content = content,
+                Sender = _server.Info
+            };
 
-            if (_client.Connected)
-                _client.SendData(data, NetDeliveryMethod.ReliableOrdered);
+            ShowMessage(_server, message);
+            RelayToClients(message);
+        }
 
-            if (_server.Connected)
-                _server.SendData(data, NetDeliveryMethod.ReliableOrdered);
+        private void SendFromClient(string content)
+        {
+            if (!_client.Connected) return;
+
+            var message = new Message
+            {
+                Content = content,
+                Sender = _client.Info
+            };
+
+            var data = SerializeMessage(message);
+            _client.SendData(data, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        private void RelayToClients(Message message)
+        {
+            if (!_server.Connected) return;
+
+            var data = SerializeMessage(message);
+            _server.SendData(data, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        private byte[] SerializeMessage(Message message)
+        {
+            using (var stream = new MemoryStream())
+            {
+                Serializer.WriteObject(message, stream);
+                return stream.ToArray();
+            }
+        }
+
+        private bool TryReadMessage(byte[] data, out Message message)
+        {
+            using (var stream = new MemoryStream(data))
+            {
+                message = Serializer.TryReadObject<Message>(stream);
+                return message != null;
+            }
+        }
+
+        private void ShowMessage(IPeerBackend recipient, Message message)
+        {
+            ColorRgba color = OtherColor;
+
+            if (recipient.Server == message.Sender)
+                color = ServerColor;
+
+            else if (recipient.Info == message.Sender)
+                color = MyColor;
+
+            Console?.Info
+                .Write(message.Sender.Name + ": ", color)
+                .WriteLine(message.Content, ColorRgba.White);
         }
 
         private void Join()
@@ -131,7 +215,7 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
 
             if (_client.Join(name, new IPEndPoint(ip, port)))
             {
-                Console?.Debug.WriteLine($"Joining from {_client.EndPoint.Address}:{_client.EndPoint.Port}");
+                Console?.Debug.WriteLine($"Joining from {_client.EndPoint}");
             }
             else
             {
@@ -149,11 +233,11 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
                 return;
             }
 
-            string name = Get<TextEditor>("Name")?.Content ?? "Ninja";
+            string name = Get<TextEditor>("Name")?.Content ?? "Ninja Master";
 
             if (_server.Host(name, port))
             {
-                Console?.Success.WriteLine($"Hosting on {_server.EndPoint.Address}:{_server.EndPoint.Port}");
+                Console?.Success.WriteLine($"Hosting on {_server.EndPoint}");
             }
             else
             {

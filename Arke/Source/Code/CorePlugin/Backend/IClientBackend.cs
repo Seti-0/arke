@@ -10,8 +10,6 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
     {
         event EventHandler<ServerJoinedEventArgs> Joined;
 
-        PeerInfo Server { get; }
-
         bool Join(string name, IPEndPoint target);
 
         void SendData(byte[] data, NetDeliveryMethod deliveryMethod, int channel = 0);

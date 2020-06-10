@@ -18,6 +18,11 @@ namespace Soulstone.Duality.Plugins.Arke
 
         public event EventHandler<ClientJoinedEventArgs> Joined;
 
+        public override PeerInfo Server
+        {
+            get => Info;
+        }
+
         public bool Hosting
         {
             get => _server != null && _server.Status == NetPeerStatus.Running;

@@ -15,11 +15,11 @@ namespace Soulstone.Duality.Plugins.Arke
     public class ClientBackend : PeerBackend, IClientBackend
     {
         private NetClient _client;
-        private bool _joining;
+        private bool _joining = false;
 
         public event EventHandler<ServerJoinedEventArgs> Joined;
 
-        public PeerInfo Server
+        public override PeerInfo Server
         {
             get => Connections.FirstOrDefault();
         }
@@ -48,6 +48,8 @@ namespace Soulstone.Duality.Plugins.Arke
                 return false;
             }
 
+            _joining = true;
+
             string appId = Properties.Settings.Default.AppID;
 
             var config = new NetPeerConfiguration(appId);
@@ -72,8 +74,17 @@ namespace Soulstone.Duality.Plugins.Arke
             SendData(data, deliveryMethod, channel, null);
         }
 
+        protected override void OnConnected(ConnectedEventArgs e)
+        {
+            _joining = false;
+
+            base.OnConnected(e);
+        }
+
         protected override void OnDisconnected(DisconnectEventArgs e)
         {
+            _joining = false;
+
             base.OnDisconnected(e);
 
             Quit();

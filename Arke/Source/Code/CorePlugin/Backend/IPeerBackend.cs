@@ -11,13 +11,15 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
         event EventHandler<DisconnectEventArgs> Disconnect;
         event EventHandler<DataRecievedEventArgs> DataRecieved;
 
-        IPEndPoint EndPoint { get; }
+        PeerInfo Info { get; }
 
         string Name { get; }
+        IPEndPoint EndPoint { get; }
+        PeerInfo Server { get; }
+        IEnumerable<PeerInfo> Connections { get; }
+
         bool Connected { get; }
         bool Idle { get; }
-
-        IEnumerable<PeerInfo> Connections { get; }
 
         void Update();
 

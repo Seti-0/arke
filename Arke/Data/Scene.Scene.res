@@ -590,7 +590,7 @@
                                       <Category dataType="Enum" type="Soulstone.Duality.Plugins.Arke.Testing.Category" name="Info" value="4" />
                                       <Content dataType="String">Hello World!/n</Content>
                                       <DateTime dataType="Struct" type="System.DateTime">
-                                        <dateData dataType="ULong">9860645176196178599</dateData>
+                                        <dateData dataType="ULong">9860645958896271576</dateData>
                                       </DateTime>
                                     </Subject>
                                   </item>
@@ -4137,6 +4137,24 @@
         <_items dataType="Array" type="Duality.Component[]" id="109672712" length="4">
           <item dataType="Struct" type="Soulstone.Duality.Plugins.Arke.Testing.TestContext" id="4124556246">
             <_x003C_Console_x003E_k__BackingField dataType="ObjectRef">1575495175</_x003C_Console_x003E_k__BackingField>
+            <_x003C_MyColor_x003E_k__BackingField dataType="Struct" type="Duality.Drawing.ColorRgba">
+              <A dataType="Byte">255</A>
+              <B dataType="Byte">51</B>
+              <G dataType="Byte">240</G>
+              <R dataType="Byte">60</R>
+            </_x003C_MyColor_x003E_k__BackingField>
+            <_x003C_OtherColor_x003E_k__BackingField dataType="Struct" type="Duality.Drawing.ColorRgba">
+              <A dataType="Byte">255</A>
+              <B dataType="Byte">240</B>
+              <G dataType="Byte">87</G>
+              <R dataType="Byte">51</R>
+            </_x003C_OtherColor_x003E_k__BackingField>
+            <_x003C_ServerColor_x003E_k__BackingField dataType="Struct" type="Duality.Drawing.ColorRgba">
+              <A dataType="Byte">255</A>
+              <B dataType="Byte">240</B>
+              <G dataType="Byte">51</G>
+              <R dataType="Byte">209</R>
+            </_x003C_ServerColor_x003E_k__BackingField>
             <active dataType="Bool">true</active>
             <gameobj dataType="ObjectRef">1146754492</gameobj>
           </item>

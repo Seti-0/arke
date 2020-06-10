@@ -15,8 +15,8 @@ namespace Soulstone.Duality.Plugins.Arke
 {
     public abstract class PeerBackend : IPeerBackend
     {
-        public Backend.IPEndPoint EndPoint { private set; get; }
-        public string Name { private set; get; }
+        public PeerInfo Info { private set; get; }
+
         public Dictionary<Backend.IPEndPoint, string> Names { get; set; } = new Dictionary<Backend.IPEndPoint, string>();
 
         public event EventHandler<DisconnectEventArgs> Disconnect;
@@ -26,20 +26,26 @@ namespace Soulstone.Duality.Plugins.Arke
         private NetPeer _peer;
         private Dictionary<Backend.IPEndPoint, NetConnection> _connections = new Dictionary<Backend.IPEndPoint, NetConnection>();
 
+        public string Name
+        {
+            get => Info.Name;
+        }
+
+        public Backend.IPEndPoint EndPoint
+        {
+            get => Info.EndPoint;
+        }
+
+        public abstract PeerInfo Server { get; }
+
         public bool Connected
         {
-            get
-            {
-                return _peer != null && _peer.ConnectionsCount > 0;
-            }
+            get => _peer != null && _peer.ConnectionsCount > 0;
         }
 
         public bool Idle
         {
-            get
-            {
-                return _peer == null;
-            }
+            get => _peer == null;
         }
 
         public IEnumerable<PeerInfo> Connections
@@ -97,15 +103,15 @@ namespace Soulstone.Duality.Plugins.Arke
             if (peer.Configuration.Port > ushort.MaxValue || peer.Configuration.Port < 0)
                 throw new ArgumentOutOfRangeException($"Port {peer.Configuration.Port} does not fall within the allowed range of 0 to {ushort.MaxValue}");
 
-            EndPoint = new Backend.IPEndPoint(Conversions.ToArke(peer.Configuration.LocalAddress), (ushort)peer.Configuration.Port);
-            Name = name;
+            var endPoint = new Backend.IPEndPoint(Conversions.ToArke(peer.Configuration.LocalAddress), (ushort)peer.Configuration.Port);
+            Info = new PeerInfo(name, endPoint);
 
             _peer = peer;
 
             try
             {
                 _peer.Start();
-                Logs.Game.Write($"Starting {_peer.GetType().Name} on {EndPoint}");
+                Logs.Game.Write($"Starting {_peer.GetType().Name} on {endPoint}");
                 return true;
             }
             catch (Exception e)
