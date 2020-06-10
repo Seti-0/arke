@@ -13,8 +13,10 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
 
         PeerInfo Info { get; }
 
+        Guid ID { get; }
         string Name { get; }
         IPEndPoint EndPoint { get; }
+
         PeerInfo Server { get; }
         IEnumerable<PeerInfo> Connections { get; }
 

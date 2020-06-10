@@ -10,21 +10,40 @@ using Lidgren.Network;
 using Duality;
 
 using Soulstone.Duality.Plugins.Arke.Backend;
+using Soulstone.Duality.Plugins.Arke.Utility;
 
 namespace Soulstone.Duality.Plugins.Arke
 {
+    public class ByeMessages
+    {
+        public const string Quit = "Quit",
+                            IDError = "IDError",
+                            UnexpectedError = "Error";
+    }
+
     public abstract class PeerBackend : IPeerBackend
     {
-        public PeerInfo Info { private set; get; }
+        private class InitialInfo
+        {
+            public Guid ID;
+            public string Name;
+        }
 
-        public Dictionary<Backend.IPEndPoint, string> Names { get; set; } = new Dictionary<Backend.IPEndPoint, string>();
+        public PeerInfo Info { private set; get; }
 
         public event EventHandler<DisconnectEventArgs> Disconnect;
         public event EventHandler<DataRecievedEventArgs> DataRecieved;
         public event EventHandler<ConnectedEventArgs> Connect;
 
         private NetPeer _peer;
+
+        private Dictionary<Backend.IPEndPoint, PeerInfo> _info = new Dictionary<Backend.IPEndPoint, PeerInfo>(); 
         private Dictionary<Backend.IPEndPoint, NetConnection> _connections = new Dictionary<Backend.IPEndPoint, NetConnection>();
+
+        public Guid ID
+        {
+            get => Info.ID;
+        }
 
         public string Name
         {
@@ -61,8 +80,8 @@ namespace Soulstone.Duality.Plugins.Arke
                 {
                     Backend.IPEndPoint endPoint = Conversions.ToArke(connection.RemoteEndPoint);
 
-                    if (Names.TryGetValue(endPoint, out string name))
-                        results.Add(new PeerInfo(name, endPoint));
+                    if (_info.TryGetValue(endPoint, out var info))
+                        results.Add(info);
                 }
 
                 return results;
@@ -75,10 +94,10 @@ namespace Soulstone.Duality.Plugins.Arke
         {
             OnQuit();
 
-            Names.Clear();
+            _info.Clear();
             _connections.Clear();
 
-            _peer.Shutdown("Quit");
+            _peer.Shutdown(ByeMessages.Quit);
             _peer = null;
         }
 
@@ -91,7 +110,7 @@ namespace Soulstone.Duality.Plugins.Arke
                 return;
             }
 
-            _peer.Shutdown(reason ?? "Unexpected shutdown");
+            _peer.Shutdown(reason ?? ByeMessages.UnexpectedError);
             _peer = null;
             Logs.Game.Write($"Shutting down {_peer.GetType().Name}");
         }
@@ -104,7 +123,7 @@ namespace Soulstone.Duality.Plugins.Arke
                 throw new ArgumentOutOfRangeException($"Port {peer.Configuration.Port} does not fall within the allowed range of 0 to {ushort.MaxValue}");
 
             var endPoint = new Backend.IPEndPoint(Conversions.ToArke(peer.Configuration.LocalAddress), (ushort)peer.Configuration.Port);
-            Info = new PeerInfo(name, endPoint);
+            Info = new PeerInfo(Guid.NewGuid(), name, endPoint);
 
             _peer = peer;
 
@@ -117,7 +136,7 @@ namespace Soulstone.Duality.Plugins.Arke
             catch (Exception e)
             {
                 Logs.Game.WriteError($"Failed to start {_peer.GetType().Name}: [{e.GetType().Name}] {e.Message}");
-                _peer.Shutdown("Error");
+                _peer.Shutdown(ByeMessages.UnexpectedError);
                 _peer = null;
             }
 
@@ -180,16 +199,31 @@ namespace Soulstone.Duality.Plugins.Arke
 
             Backend.IPEndPoint endPoint = Conversions.ToArke(message.SenderEndPoint);
 
-            if (Names.TryGetValue(endPoint, out string name))
+            if (_info.TryGetValue(endPoint, out var _senderInfo))
             {
-                var senderInfo = new PeerInfo(name, endPoint);
-                OnDataRecieved(new DataRecievedEventArgs(senderInfo, data));
+                OnDataRecieved(new DataRecievedEventArgs(_senderInfo, data));
             }
             else
             {
-                var newName = Encoding.UTF8.GetString(data);
-                Names.Add(endPoint, newName);
-                OnIdentified(new PeerInfo(newName, endPoint));
+                if (SerializationHelper.TryGetObject<InitialInfo>(data, out var initialInfo))
+                {
+                    if (_info.Values.Select(x => x.ID).Contains(initialInfo.ID))
+                    {
+                        message.SenderConnection.Disconnect(ByeMessages.IDError);
+                    }
+
+                    var senderInfo = new PeerInfo(initialInfo.ID, initialInfo.Name, endPoint);
+                    _info.Add(endPoint, senderInfo);
+
+                    Logs.Game.Write($"Identified {endPoint}: {initialInfo.Name} ({initialInfo.ID})");
+
+                    OnIdentified(senderInfo);
+                }
+                else
+                {
+                    var text = Encoding.UTF8.GetString(data);
+                    Logs.Game.WriteWarning($"Recieved data from unidentified sender {endPoint}: {text}");
+                }
             }
         }
 
@@ -205,22 +239,21 @@ namespace Soulstone.Duality.Plugins.Arke
                 case NetConnectionStatus.Connected:
                     _connections.Add(endPoint, message.SenderConnection);
                     OnConnected(new ConnectedEventArgs(endPoint));
-                    SendName(message.SenderConnection);
+                    SendInitialInfo(message.SenderConnection);
                     break;
 
                 case NetConnectionStatus.Disconnected:
 
-                    var reason = (message.ReadString() == "Quit") ? 
+                    var reason = (message.ReadString() == ByeMessages.Quit) ? 
                         DisconnectReason.Quit : 
                         DisconnectReason.Unexpected;
 
-                    if (!Names.TryGetValue(endPoint, out string name))
-                        name = null;
+                    if (!_info.TryGetValue(endPoint, out var senderInfo))
+                        senderInfo = null;
 
-                    Names.Remove(endPoint);
+                    _info.Remove(endPoint);
                     _connections.Remove(endPoint);
 
-                    var senderInfo = new PeerInfo(name, endPoint);
                     OnDisconnected(new DisconnectEventArgs(senderInfo, reason));
                     
                     break;
@@ -236,9 +269,15 @@ namespace Soulstone.Duality.Plugins.Arke
             }
         }
 
-        private void SendName(NetConnection connection)
+        private void SendInitialInfo(NetConnection connection)
         {
-            var data = Encoding.UTF8.GetBytes(Name);
+            var info = new InitialInfo
+            {
+                ID = ID,
+                Name = Name
+            };
+
+            var data = SerializationHelper.GetBytes(info);
 
             var message = _peer.CreateMessage();
             message.WriteVariableInt32(data.Length);

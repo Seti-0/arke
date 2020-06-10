@@ -81,6 +81,7 @@
     <Compile Include="Testing\TestConsole.cs" />
     <Compile Include="Testing\TestContext.cs" />
     <Compile Include="Utility\Conversions.cs" />
+    <Compile Include="Utility\Serialization.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

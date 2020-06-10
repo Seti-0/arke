@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Duality.Serialization;
+using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,13 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
 {
     public class PeerInfo
     {
+        public Guid ID { get; }
         public string Name { get; }
         public IPEndPoint EndPoint { get; }
 
-        public PeerInfo(string name, IPEndPoint endPoint)
+        public PeerInfo(Guid id, string name, IPEndPoint endPoint)
         {
+            ID = id;
             Name = name;
             EndPoint = endPoint;
         }
@@ -35,6 +38,12 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
             return result;
         }
 
+        public string ToLongString()
+        {
+            return $"{ToString()} ({ID})";
+        }
+
+        /*
         public static bool operator ==(PeerInfo a, PeerInfo b)
         {
             if (a is null) return b is null;
@@ -69,5 +78,6 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
 
             return hashCode;
         }
+        */
     }
 }

@@ -183,10 +183,10 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
         {
             ColorRgba color = OtherColor;
 
-            if (recipient.Server == message.Sender)
+            if (recipient.Server.ID == message.Sender.ID)
                 color = ServerColor;
 
-            else if (recipient.Info == message.Sender)
+            else if (recipient.Info.ID == message.Sender.ID)
                 color = MyColor;
 
             Console?.Info
