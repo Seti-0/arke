@@ -12,9 +12,8 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
     {
         bool Hosting { get; }
 
+
         event EventHandler<ClientJoinedEventArgs> Joined;
-        event EventHandler<DisconnectEventArgs> Disconnected;
-        event EventHandler<DataRecievedEventArgs> DataRecieved;
 
         bool Host(string name, ushort port);
         

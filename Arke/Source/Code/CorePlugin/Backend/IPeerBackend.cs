@@ -8,11 +8,16 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
 {
     public interface IPeerBackend
     {
+        event EventHandler<DisconnectEventArgs> Disconnect;
+        event EventHandler<DataRecievedEventArgs> DataRecieved;
+
         IPEndPoint EndPoint { get; }
 
         string Name { get; }
         bool Connected { get; }
         bool Idle { get; }
+
+        IEnumerable<PeerInfo> Connections { get; }
 
         void Update();
 

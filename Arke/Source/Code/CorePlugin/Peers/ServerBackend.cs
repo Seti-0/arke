@@ -53,23 +53,11 @@ namespace Soulstone.Duality.Plugins.Arke
             return Start(server, name);
         }
 
-        protected override void HandleStatusChanged(NetIncomingMessage message, PeerInfo senderInfo)
+        protected override void OnIdentified(PeerInfo senderInfo)
         {
-            switch (message.SenderConnection.Status)
-            {
-                case NetConnectionStatus.Connected:
-                    OnJoined(new ClientJoinedEventArgs(senderInfo));
-                    break;
+            base.OnIdentified(senderInfo);
 
-                case NetConnectionStatus.Disconnected:
-                    var reason = (message.ReadString() == "Quit") ? DisconnectReason.Quit : DisconnectReason.Unexpected;
-                    OnDisconnected(new DisconnectEventArgs(senderInfo, reason));
-                    break;
-
-                default:
-                    Logs.Game.WriteWarning($"Unhandled connection status: {message.SenderConnection.Status}");
-                    break;
-            }
+            OnJoined(new ClientJoinedEventArgs(senderInfo));
         }
 
         public void SendData(byte[] data, Backend.NetDeliveryMethod deliveryMethod, int channel = 0)
@@ -79,33 +67,7 @@ namespace Soulstone.Duality.Plugins.Arke
 
         public void SendData(byte[] data, Backend.NetDeliveryMethod deliveryMethod, int channel = 0, params PeerInfo[] targets)
         {
-            if (targets == null) throw new ArgumentNullException(nameof(targets));
-
-            var connections = new List<NetConnection>();
-
-            foreach (var target in targets)
-            {
-                bool found = false;
-
-                foreach (var connection in _server.Connections)
-                {
-                    var endpoint = Conversions.ToArke(connection.RemoteEndPoint);
-                    if (endpoint == target.EndPoint)
-                    {
-                        connections.Add(connection);
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    Logs.Game.WriteWarning("Attempted to send data to (target: " + target.ToString() + "), " +
-                        "but the server does not appear to be connected to it.");
-                }
-            }
-
-            SendData(data, deliveryMethod, channel, connections);
+            base.SendData(data, deliveryMethod, channel, targets);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.CodeDom;
 
 namespace Soulstone.Duality.Plugins.Arke.Backend
 {
@@ -90,17 +91,54 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
             else return string.Join(",", _bytes) + " (unknown format)";
         }
 
+       public static bool operator ==(IPAddress a, IPAddress b)
+        {
+            if (a is null)
+                return b is null;
+
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(IPAddress a, IPAddress b)
+        {
+            return !(a == b);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is IPAddress other)
-                return other._bytes == _bytes;
+            {
+                if (other.Bytes == Bytes)
+                    return true;
+
+                if (other.Bytes == null || Bytes == null)
+                    return false;
+
+                if (other.Bytes.Length != Bytes.Length)
+                    return false;
+
+                for (int i = 0; i < Bytes.Length; i++)
+                    if (Bytes[i] != other.Bytes[i])
+                        return false;
+
+                return true;
+            }
 
             else return base.Equals(obj);
         }
 
         public override int GetHashCode()
         {
-            return _bytes.GetHashCode();
+            if (Bytes == null)
+                return 0;
+
+            // From SO. I don't know effective this actually is.
+
+            int hash = 17;
+            for (int i = 0; i < Bytes.Length; i++)
+                hash = 31 + Bytes[i].GetHashCode();
+
+            return hash;
         }
     }
 }

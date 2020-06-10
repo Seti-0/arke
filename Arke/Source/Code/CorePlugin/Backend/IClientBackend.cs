@@ -9,8 +9,8 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
     public interface IClientBackend : IPeerBackend
     {
         event EventHandler<ServerJoinedEventArgs> Joined;
-        event EventHandler<DisconnectEventArgs> Disconnected;
-        event EventHandler<DataRecievedEventArgs> DataRecieved;
+
+        PeerInfo Server { get; }
 
         bool Join(string name, IPEndPoint target);
 

@@ -18,6 +18,19 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
             Address = address;
         }
 
+        public static bool operator ==(IPEndPoint a, IPEndPoint b)
+        {
+            if (a is null)
+                return b is null;
+
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(IPEndPoint a, IPEndPoint b)
+        {
+            return !(a == b);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is IPEndPoint other)

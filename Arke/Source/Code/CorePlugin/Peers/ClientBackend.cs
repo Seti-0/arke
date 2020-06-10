@@ -19,6 +19,11 @@ namespace Soulstone.Duality.Plugins.Arke
 
         public event EventHandler<ServerJoinedEventArgs> Joined;
 
+        public PeerInfo Server
+        {
+            get => Connections.FirstOrDefault();
+        }
+
         public bool Joining
         {
             get => _joining;
@@ -55,29 +60,23 @@ namespace Soulstone.Duality.Plugins.Arke
             return true;
         }
 
-        protected override void HandleStatusChanged(NetIncomingMessage message, PeerInfo senderInfo)
+        protected override void OnIdentified(PeerInfo senderInfo)
         {
-            switch (message.SenderConnection.Status)
-            {
-                case NetConnectionStatus.Connected:
-                    _joining = false;
-                    OnJoined(new ServerJoinedEventArgs(senderInfo));
-                    break;
+            base.OnIdentified(senderInfo);
 
-                case NetConnectionStatus.Disconnected:
-                    var reason = (message.ReadString() == "Quit") ? DisconnectReason.Quit : DisconnectReason.Unexpected;
-                    OnDisconnected(new DisconnectEventArgs(senderInfo, reason));
-                    break;
-
-                default:
-                    Logs.Game.WriteWarning($"Unhandled connection status: {message.SenderConnection.Status}");
-                    break;
-            }
+            OnJoined(new ServerJoinedEventArgs(senderInfo));
         }
 
         public void SendData(byte[] data, Backend.NetDeliveryMethod deliveryMethod, int channel = 0)
         {
             SendData(data, deliveryMethod, channel, null);
+        }
+
+        protected override void OnDisconnected(DisconnectEventArgs e)
+        {
+            base.OnDisconnected(e);
+
+            Quit();
         }
     }
 }

@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Backend\Events\ClientJoinedEventArgs.cs" />
+    <Compile Include="Backend\Events\ConnectedEventArgs.cs" />
     <Compile Include="Backend\Events\DataRecievedEventArgs.cs" />
     <Compile Include="Backend\Events\DisconnectEventArgs.cs" />
     <Compile Include="Backend\Events\NetEventAgs.cs" />
