@@ -28,7 +28,7 @@ namespace Soulstone.Duality.Plugins.Arke.Backend
                 result += " ";
 
             if (EndPoint != null)
-                result += $"{EndPoint}";
+                result += $"({EndPoint})";
 
             return result;
         }
