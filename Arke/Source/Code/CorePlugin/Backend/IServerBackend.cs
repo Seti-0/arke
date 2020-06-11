@@ -8,7 +8,7 @@ using Lidgren.Network;
 
 namespace Soulstone.Duality.Plugins.Arke.Backend
 {
-    public interface IServerBackend
+    public interface IServerBackend : IPeerBackend
     {
         bool Hosting { get; }
 

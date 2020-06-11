@@ -26,8 +26,8 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
 
         public TestConsole Console { get; set; }
 
-        [DontSerialize] private ServerBackend _server = new ServerBackend();
-        [DontSerialize] private ClientBackend _client = new ClientBackend();
+        [DontSerialize] private IServerBackend _server = new ServerBackend();
+        [DontSerialize] private IClientBackend _client = new ClientBackend();
 
         private class Message
         {
