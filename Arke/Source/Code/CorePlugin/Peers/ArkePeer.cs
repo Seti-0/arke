@@ -9,11 +9,13 @@ using Lidgren.Network;
 
 using Duality;
 
-using Soulstone.Duality.Plugins.Arke.Backend;
+using Soulstone.Duality.Plugins.Atlas.Network;
 using Soulstone.Duality.Plugins.Arke.Utility;
 
 namespace Soulstone.Duality.Plugins.Arke
 {
+    using Arke = Atlas.Network;
+
     public class ByeMessages
     {
         public const string Quit = "Quit",
@@ -21,7 +23,7 @@ namespace Soulstone.Duality.Plugins.Arke
                             UnexpectedError = "Error";
     }
 
-    public abstract class PeerBackend : IPeerBackend
+    public abstract class ArkePeer : INetworkPeer
     {
         private class InitialInfo
         {
@@ -37,8 +39,8 @@ namespace Soulstone.Duality.Plugins.Arke
 
         private NetPeer _peer;
 
-        private Dictionary<Backend.IPEndPoint, PeerInfo> _info = new Dictionary<Backend.IPEndPoint, PeerInfo>(); 
-        private Dictionary<Backend.IPEndPoint, NetConnection> _connections = new Dictionary<Backend.IPEndPoint, NetConnection>();
+        private Dictionary<Arke.IPEndPoint, PeerInfo> _info = new Dictionary<Arke.IPEndPoint, PeerInfo>(); 
+        private Dictionary<Arke.IPEndPoint, NetConnection> _connections = new Dictionary<Arke.IPEndPoint, NetConnection>();
 
         public Guid ID
         {
@@ -50,7 +52,7 @@ namespace Soulstone.Duality.Plugins.Arke
             get => Info.Name;
         }
 
-        public Backend.IPEndPoint EndPoint
+        public Arke.IPEndPoint EndPoint
         {
             get => Info.EndPoint;
         }
@@ -78,7 +80,7 @@ namespace Soulstone.Duality.Plugins.Arke
 
                 foreach (var connection in _peer.Connections)
                 {
-                    Backend.IPEndPoint endPoint = Conversions.ToArke(connection.RemoteEndPoint);
+                    Arke.IPEndPoint endPoint = Conversions.ToArke(connection.RemoteEndPoint);
 
                     if (_info.TryGetValue(endPoint, out var info))
                         results.Add(info);
@@ -125,7 +127,7 @@ namespace Soulstone.Duality.Plugins.Arke
             if (peer.Configuration.Port > ushort.MaxValue || peer.Configuration.Port < 0)
                 throw new ArgumentOutOfRangeException($"Port {peer.Configuration.Port} does not fall within the allowed range of 0 to {ushort.MaxValue}");
 
-            var endPoint = new Backend.IPEndPoint(Conversions.ToArke(peer.Configuration.LocalAddress), (ushort)peer.Configuration.Port);
+            var endPoint = new Arke.IPEndPoint(Conversions.ToArke(peer.Configuration.LocalAddress), (ushort)peer.Configuration.Port);
             Info = new PeerInfo(Guid.NewGuid(), name, endPoint);
 
             _peer = peer;
@@ -200,7 +202,7 @@ namespace Soulstone.Duality.Plugins.Arke
             int length = message.ReadVariableInt32();
             byte[] data = message.ReadBytes(length);
 
-            Backend.IPEndPoint endPoint = Conversions.ToArke(message.SenderEndPoint);
+            Arke.IPEndPoint endPoint = Conversions.ToArke(message.SenderEndPoint);
 
             if (_info.TryGetValue(endPoint, out var _senderInfo))
             {
@@ -307,7 +309,7 @@ namespace Soulstone.Duality.Plugins.Arke
             Disconnect?.Invoke(this, e);
         }
 
-        protected void SendData(byte[] data, Backend.NetDeliveryMethod deliveryMethod, int channel, IList<PeerInfo> target = null)
+        protected void SendData(byte[] data, DeliveryMethod deliveryMethod, int channel, IList<PeerInfo> target = null)
         {
             if (!Connected)
             {
@@ -332,7 +334,7 @@ namespace Soulstone.Duality.Plugins.Arke
             Send(data, deliveryMethod, channel, list);
         }
 
-        private void Send(byte[] data, Backend.NetDeliveryMethod deliveryMethod, int channel, IList<NetConnection> target = null)
+        private void Send(byte[] data, DeliveryMethod deliveryMethod, int channel, IList<NetConnection> target = null)
         {
             var message = _peer.CreateMessage();
             message.WriteVariableInt32(data.Length);

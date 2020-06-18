@@ -10,7 +10,7 @@ using Duality.Serialization;
 using Duality.Drawing;
 using Duality.Editor;
 
-using Soulstone.Duality.Plugins.Arke.Backend;
+using Soulstone.Duality.Plugins.Atlas.Network;
 using Soulstone.Duality.Plugins.Blue;
 using Soulstone.Duality.Plugins.Blue.Components.Basic;
 using System.IO;
@@ -26,8 +26,8 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
 
         public TestConsole Console { get; set; }
 
-        [DontSerialize] private IServerBackend _server = new ServerBackend();
-        [DontSerialize] private IClientBackend _client = new ClientBackend();
+        [DontSerialize] private IServer _server = new ArkeServer();
+        [DontSerialize] private IClient _client = new ArkeClient();
 
         private class Message
         {
@@ -150,7 +150,7 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
             };
 
             var data = SerializeMessage(message);
-            _client.SendData(data, NetDeliveryMethod.ReliableOrdered);
+            _client.SendData(data, DeliveryMethod.ReliableOrdered);
         }
 
         private void RelayToClients(Message message)
@@ -158,7 +158,7 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
             if (!_server.Connected) return;
 
             var data = SerializeMessage(message);
-            _server.SendData(data, NetDeliveryMethod.ReliableOrdered);
+            _server.SendData(data, DeliveryMethod.ReliableOrdered);
         }
 
         private byte[] SerializeMessage(Message message)
@@ -179,7 +179,7 @@ namespace Soulstone.Duality.Plugins.Arke.Testing
             }
         }
 
-        private void ShowMessage(IPeerBackend recipient, Message message)
+        private void ShowMessage(INetworkPeer recipient, Message message)
         {
             ColorRgba color = OtherColor;
 

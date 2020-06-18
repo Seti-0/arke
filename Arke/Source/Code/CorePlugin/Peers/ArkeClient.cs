@@ -8,11 +8,11 @@ using Lidgren.Network;
 
 using Duality;
 
-using Soulstone.Duality.Plugins.Arke.Backend;
+using Soulstone.Duality.Plugins.Atlas.Network;
 
 namespace Soulstone.Duality.Plugins.Arke
 {
-    public class ClientBackend : PeerBackend, IClientBackend
+    public class ArkeClient : ArkePeer, IClient
     {
         private NetClient _client;
         private bool _joining = false;
@@ -34,7 +34,7 @@ namespace Soulstone.Duality.Plugins.Arke
             Joined?.Invoke(this, e);
         }
 
-        public bool Join(string name, IPEndPoint target)
+        public bool Join(string name, Atlas.Network.IPEndPoint target)
         {
             if (Joining)
             {
@@ -70,7 +70,7 @@ namespace Soulstone.Duality.Plugins.Arke
             OnJoined(new ServerJoinedEventArgs(senderInfo));
         }
 
-        public void SendData(byte[] data, Backend.NetDeliveryMethod deliveryMethod, int channel = 0)
+        public void SendData(byte[] data, DeliveryMethod deliveryMethod, int channel = 0)
         {
             SendData(data, deliveryMethod, channel, null);
         }

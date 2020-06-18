@@ -6,54 +6,57 @@ using System.Threading.Tasks;
 
 using System.Net;
 
-using Soulstone.Duality.Plugins.Arke.Backend;
+using Soulstone.Duality.Plugins.Atlas.Network;
 
 namespace Soulstone.Duality.Plugins.Arke
 {
+    using Net = System.Net;
+    using Arke = Atlas.Network;
+
     internal static class Conversions
     {
-        public static Backend.IPEndPoint ToArke(System.Net.IPEndPoint ipEnd)
+        public static Arke.IPEndPoint ToArke(Net.IPEndPoint ipEnd)
         {
             if (ipEnd == null) 
                 throw new ArgumentNullException(nameof(ipEnd));
 
-            return new Backend.IPEndPoint(ToArke(ipEnd.Address), (ushort)ipEnd.Port);
+            return new Arke.IPEndPoint(ToArke(ipEnd.Address), (ushort)ipEnd.Port);
         }
 
-        public static Backend.IPAddress ToArke(System.Net.IPAddress ip)
+        public static Arke.IPAddress ToArke(Net.IPAddress ip)
         {
             if (ip == null) 
                 throw new ArgumentNullException(nameof(ip));
 
-            return new Backend.IPAddress(ip.GetAddressBytes());
+            return new Arke.IPAddress(ip.GetAddressBytes());
         }
 
-        public static System.Net.IPEndPoint ToNet(Backend.IPEndPoint ipEnd)
+        public static Net.IPEndPoint ToNet(Arke.IPEndPoint ipEnd)
         {
             if (ipEnd == null) 
                 throw new ArgumentNullException(nameof(ipEnd));
 
-            return new System.Net.IPEndPoint(ToNet(ipEnd.Address), ipEnd.Port);
+            return new Net.IPEndPoint(ToNet(ipEnd.Address), ipEnd.Port);
         }
 
-        public static System.Net.IPAddress ToNet(Backend.IPAddress ip)
+        public static Net.IPAddress ToNet(Arke.IPAddress ip)
         {
             if (ip == null) 
                 throw new ArgumentNullException(nameof(ip));
 
-            return new System.Net.IPAddress(ip.Bytes);
+            return new Net.IPAddress(ip.Bytes);
         }
 
-        public static Lidgren.Network.NetDeliveryMethod ToLidgren(NetDeliveryMethod method)
+        public static Lidgren.Network.NetDeliveryMethod ToLidgren(DeliveryMethod method)
         {
             switch (method)
             {
-                case NetDeliveryMethod.Unknown: return Lidgren.Network.NetDeliveryMethod.Unknown;
-                case NetDeliveryMethod.Unreliable: return Lidgren.Network.NetDeliveryMethod.Unreliable;
-                case NetDeliveryMethod.UnreliableSequenced: return Lidgren.Network.NetDeliveryMethod.UnreliableSequenced;
-                case NetDeliveryMethod.ReliableUnordered: return Lidgren.Network.NetDeliveryMethod.ReliableUnordered;
-                case NetDeliveryMethod.ReliableSequenced: return Lidgren.Network.NetDeliveryMethod.ReliableSequenced;
-                case NetDeliveryMethod.ReliableOrdered: return Lidgren.Network.NetDeliveryMethod.ReliableOrdered;
+                case DeliveryMethod.Unknown: return Lidgren.Network.NetDeliveryMethod.Unknown;
+                case DeliveryMethod.Unreliable: return Lidgren.Network.NetDeliveryMethod.Unreliable;
+                case DeliveryMethod.UnreliableSequenced: return Lidgren.Network.NetDeliveryMethod.UnreliableSequenced;
+                case DeliveryMethod.ReliableUnordered: return Lidgren.Network.NetDeliveryMethod.ReliableUnordered;
+                case DeliveryMethod.ReliableSequenced: return Lidgren.Network.NetDeliveryMethod.ReliableSequenced;
+                case DeliveryMethod.ReliableOrdered: return Lidgren.Network.NetDeliveryMethod.ReliableOrdered;
 
                 default: return Lidgren.Network.NetDeliveryMethod.Unknown;
             }

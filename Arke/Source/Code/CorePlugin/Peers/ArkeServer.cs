@@ -8,11 +8,11 @@ using Duality;
 
 using Lidgren.Network;
 
-using Soulstone.Duality.Plugins.Arke.Backend;
+using Soulstone.Duality.Plugins.Atlas.Network;
 
 namespace Soulstone.Duality.Plugins.Arke
 {
-    public class ServerBackend : PeerBackend, IServerBackend
+    public class ArkeServer : ArkePeer, IServer
     {
         private NetServer _server;
 
@@ -65,12 +65,12 @@ namespace Soulstone.Duality.Plugins.Arke
             OnJoined(new ClientJoinedEventArgs(senderInfo));
         }
 
-        public void SendData(byte[] data, Backend.NetDeliveryMethod deliveryMethod, int channel = 0)
+        public void SendData(byte[] data, DeliveryMethod deliveryMethod, int channel = 0)
         {
             base.SendData(data, deliveryMethod, channel, null);
         }
 
-        public void SendData(byte[] data, Backend.NetDeliveryMethod deliveryMethod, int channel = 0, params PeerInfo[] targets)
+        public void SendData(byte[] data, DeliveryMethod deliveryMethod, int channel = 0, params PeerInfo[] targets)
         {
             base.SendData(data, deliveryMethod, channel, targets);
         }

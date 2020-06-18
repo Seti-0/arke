@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{AFE883F3-72B4-4C7C-A1D1-44EDC09C8F6E}</ProjectGuid>
+    <ProjectGuid>{1DC32653-D855-4604-9EFF-34D99C865F1E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Soulstone.Duality.Plugins.Arke</RootNamespace>
@@ -39,6 +39,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Atlas.core">
+      <HintPath>..\..\..\Plugins\Atlas.core.dll</HintPath>
+    </Reference>
     <Reference Include="Blue.core">
       <HintPath>..\..\..\Plugins\Blue.core.dll</HintPath>
     </Reference>
@@ -54,25 +57,12 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Backend\Events\ClientJoinedEventArgs.cs" />
-    <Compile Include="Backend\Events\ConnectedEventArgs.cs" />
-    <Compile Include="Backend\Events\DataRecievedEventArgs.cs" />
-    <Compile Include="Backend\Events\DisconnectEventArgs.cs" />
-    <Compile Include="Backend\Events\NetEventAgs.cs" />
-    <Compile Include="Backend\Events\ServerJoinedEventArgs.cs" />
-    <Compile Include="Backend\Data\IPAddress.cs" />
-    <Compile Include="Backend\Data\IPEndPoint.cs" />
-    <Compile Include="Backend\Data\PeerInfo.cs" />
-    <Compile Include="Backend\IClientBackend.cs" />
-    <Compile Include="Backend\IPeerBackend.cs" />
-    <Compile Include="Backend\Data\NetDeliveryMethod.cs" />
     <Compile Include="CategoryNames.cs" />
-    <Compile Include="Peers\ClientBackend.cs" />
+    <Compile Include="Peers\ArkeClient.cs" />
     <Compile Include="CorePlugin.cs" />
-    <Compile Include="Backend\IServerBackend.cs" />
-    <Compile Include="Peers\PeerBackend.cs" />
+    <Compile Include="Peers\ArkePeer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Peers\ServerBackend.cs" />
+    <Compile Include="Peers\ArkeServer.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
