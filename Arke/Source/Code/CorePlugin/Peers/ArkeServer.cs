@@ -8,6 +8,7 @@ using Duality;
 
 using Lidgren.Network;
 
+using Soulstone.Duality.Plugins.Atlas;
 using Soulstone.Duality.Plugins.Atlas.Network;
 
 namespace Soulstone.Duality.Plugins.Arke
@@ -37,13 +38,13 @@ namespace Soulstone.Duality.Plugins.Arke
         {
             if (Hosting)
             {
-                Logs.Game.WriteWarning("Cannot start hosting while hosting already.");
+                AtlasApp.NetworkLog.WriteWarning("Cannot start hosting while hosting already.");
                 return false;
             }
 
             if (!Idle)
             {
-                Logs.Game.WriteWarning("Must be idle to start hosting.");
+                AtlasApp.NetworkLog.WriteWarning("Must be idle to start hosting.");
                 return false;
             }
 
